@@ -14,17 +14,23 @@ function Main (props) {
   // The currently stored value
   const [currentValue, setCurrentValue] = useState(0);
   const [formValue, setFormValue] = useState(0);
+  const [currentName, setCurrentName] = useState("");
+  const [currentNumber, setCurrentNumber]=useState(0);
+  const [Name, setName] = useState("");
+  const [Number, setNumber] = useState(0);
 
   useEffect(() => {
     let unsubscribe;
-    api.query.templateModule.something(newValue => {
+    api.query.templateModule.people(newValue => {
       // The storage value is an Option<u32>
       // So we have to check whether it is None first
       // There is also unwrapOr
       if (newValue.isNone) {
-        setCurrentValue('<None>');
+        setCurrentName("Default");
+        setCurrentNumber(0);
       } else {
-        setCurrentValue(newValue.unwrap().toNumber());
+        setCurrentName(newValue.name.toHuman());
+        setCurrentNumber(newValue.number);
       }
     }).then(unsub => {
       unsubscribe = unsub;
@@ -36,38 +42,61 @@ function Main (props) {
 
   return (
     <Grid.Column width={8}>
-      <h1>Template Module</h1>
+      <h1>Proflie</h1>
       <Card centered>
-        <Card.Content textAlign='center'>
-          <Statistic
-            label='Current Value'
-            value={currentValue}
-          />
+        <Card.Content >
+          <Card.Header content={'User Name :  '+currentName}/>
+          <Card.Meta content={'ID Number   '+currentNumber} />
         </Card.Content>
       </Card>
       <Form>
         <Form.Field>
           <Input
-            label='New Value'
+            label='Name'
             state='newValue'
-            type='number'
-            onChange={(_, { value }) => setFormValue(value)}
+            type='string'
+            onChange={(_, { value }) => setName(value)}
           />
         </Form.Field>
+        <Form.Field>
+          <Input
+            label='Id Number'
+            state='newValue'
+            type='number'
+            onChange={(_, { value }) => setNumber(value)}
+          />
+        </Form.Field>
+
         <Form.Field style={{ textAlign: 'center' }}>
           <TxButton
             accountPair={accountPair}
-            label='Store Something'
+            label='Update Name'
             type='SIGNED-TX'
             setStatus={setStatus}
             attrs={{
               palletRpc: 'templateModule',
-              callable: 'doSomething',
-              inputParams: [formValue],
+              callable: 'changeName',
+              inputParams: [Name ],
               paramFields: [true]
             }}
           />
         </Form.Field>
+
+        <Form.Field style={{ textAlign: 'center' }}>
+          <TxButton
+            accountPair={accountPair}
+            label='Update Number'
+            type='SIGNED-TX'
+            setStatus={setStatus}
+            attrs={{
+              palletRpc: 'templateModule',
+              callable: 'changedNumber',
+              inputParams: [Number],
+              paramFields: [true]
+            }}
+          />
+        </Form.Field>
+
         <div style={{ overflowWrap: 'break-word' }}>{status}</div>
       </Form>
     </Grid.Column>
