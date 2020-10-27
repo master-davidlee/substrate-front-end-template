@@ -9,12 +9,9 @@ import AccountSelector from './AccountSelector';
 import Balances from './Balances';
 import BlockNumber from './BlockNumber';
 import Events from './Events';
-import Interactor from './Interactor';
 import Metadata from './Metadata';
 import NodeInfo from './NodeInfo';
-import TemplateModule from './TemplateModule';
-import Transfer from './Transfer';
-import Upgrade from './Upgrade';
+import LolTransfer from './LolTransfer';
 
 function Main () {
   const [accountAddress, setAccountAddress] = useState(null);
@@ -34,7 +31,7 @@ function Main () {
       <Grid.Column>
         <Message negative compact floating
           header='Error Connecting to Substrate'
-          content={`${JSON.stringify(err, null, 4)}`}
+          content={`${err}`}
         />
       </Grid.Column>
     </Grid>;
@@ -50,42 +47,34 @@ function Main () {
 
   return (
     <div ref={contextRef}>
-      <Sticky context={contextRef}>
-        <AccountSelector setAccountAddress={setAccountAddress} />
-      </Sticky>
-      <Container>
-        <Grid stackable columns='equal'>
-          <Grid.Row stretched>
-            <NodeInfo />
-            <Metadata />
-            <BlockNumber />
-            <BlockNumber finalized />
-          </Grid.Row>
-          <Grid.Row stretched>
-            <Balances />
-          </Grid.Row>
-          <Grid.Row>
-            <Transfer accountPair={accountPair} />
-            <Upgrade accountPair={accountPair} />
-          </Grid.Row>
-          <Grid.Row>
-            <Interactor accountPair={accountPair} />
-            <Events />
-          </Grid.Row>
-          <Grid.Row>
-            <TemplateModule accountPair={accountPair} />
-          </Grid.Row>
-        </Grid>
-      </Container>
-      <DeveloperConsole />
+        <Sticky context={contextRef}>
+            <AccountSelector setAccountAddress={setAccountAddress}/>
+        </Sticky>
+        <Container>
+            <Grid stackable columns='equal'>
+                <Grid.Row stretched>
+                    <NodeInfo/>
+                    <Metadata/>
+                    <BlockNumber/>
+                    <BlockNumber finalized/>
+                </Grid.Row>
+                <Grid.Row>
+                    <LolTransfer accountPair={accountPair}/>
+                </Grid.Row>
+                <Grid.Row>
+                    <Events/>
+                </Grid.Row>
+            </Grid>
+        </Container>
+        <DeveloperConsole/>
     </div>
-  );
+);
 }
 
-export default function App () {
-  return (
+export default function App() {
+return (
     <SubstrateContextProvider>
-      <Main />
+        <Main/>
     </SubstrateContextProvider>
-  );
+);
 }
